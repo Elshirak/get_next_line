@@ -6,7 +6,7 @@
 /*   By: selbakya <selbakya@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/07 15:36:31 by selbakya          #+#    #+#             */
-/*   Updated: 2023/05/07 19:28:04 by selbakya         ###   ########.fr       */
+/*   Updated: 2023/05/07 22:43:06 by selbakya         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char	*ft_strdup(const char *source_string)
 	length_str = ft_strlen(source_string) + 1;
 	result = (char *) malloc(sizeof(char) * length_str);
 	if (!result)
-		return (0);
+		return (NULL);
 	i = 0;
 	while (i < length_str)
 	{
@@ -44,7 +44,7 @@ char	*ft_strchr(const char *pointer_str, int symbol)
 			return ((char *)pointer_str);
 		++pointer_str;
 	}
-	return (0);
+	return (NULL);
 }
 
 char	*ft_strjoin(char const *s1, char const *s2)
@@ -58,7 +58,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	len_result_string = ft_strlen(s1) + ft_strlen(s2) + 1;
 	ptr_result = (char *) malloc(len_result_string * sizeof(char));
 	if (!ptr_result)
-		return (0);
+		return (NULL);
 	result = ptr_result;
 	while (*s1 != '\0')
 		*ptr_result++ = *s1++;
@@ -87,7 +87,7 @@ char	*ft_substr(char const *s, unsigned int start, int len)
 	int		iterator;
 
 	if (s == 0)
-		return (0);
+		return (NULL);
 	string_size = ft_strlen(&s[start]);
 	if (string_size >= len)
 		string_size = len;
@@ -95,7 +95,7 @@ char	*ft_substr(char const *s, unsigned int start, int len)
 		return (ft_strdup(""));
 	ptr_to_result_string = (char *) malloc((string_size + 1) * sizeof (char));
 	if (!ptr_to_result_string)
-		return (0);
+		return (NULL);
 	iterator = 0;
 	while (iterator != string_size)
 	{
