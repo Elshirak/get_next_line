@@ -109,34 +109,3 @@ char	*ft_strjoin(char *s1, char *s2)
 		free(s1);
 	return (join);
 }
-
-/*
-ft_strjoin gets seg and memory leaks !!! this is working one:
-
-char	*ft_strjoin(char *s1, char *s2)
-{
-	size_t	len1;
-	size_t	len2;
-	long	i;
-	char	*join;
-
-	if (!s1 || !s2)
-		return (NULL);
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
-	join = (char *)malloc((len1 + len2 + 1) * sizeof(char));
-	if (!join)
-		return (NULL);
-	i = -1;
-	while ((size_t)(++i) < len1)
-		*(join + i) = *(s1 + i);
-	--i;
-	while ((size_t)(++i) < len1 + len2)
-		*(join + i) = *(s2 + i - len1);
-	*(join + len1 + len2) = '\0';
-	if (s1)
-		free(s1);
-	return (join);
-}
-
-*/
