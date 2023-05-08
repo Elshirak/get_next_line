@@ -6,84 +6,60 @@
 /*   By: selbakya <selbakya@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/07 19:32:50 by selbakya          #+#    #+#             */
-/*   Updated: 2023/05/07 23:25:15 by selbakya         ###   ########.fr       */
+/*   Updated: 2023/05/08 22:53:21 by selbakya         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char static	ft_read_line(int fd, char *collector_buff)
+static char	*ft_get_slice(int fd, char *few_buffers)
 {
-	int		read_flag_or_index;
-	char	tmp_buf[BUFFER_SIZE + 1];
+	char	real_buf[BUFFER_SIZE + 1];
+	char	*tmp_line;
+	long	read_flag_size;
 
-	read_flag_or_index = 1;
-	while (!ft_strchr(collector_buff, '\n') && read_flag_or_index > 0)
+	read_flag_size = 1;
+	while (1)
 	{
-		read_flag_or_index = read(fd, tmp_buf, BUFFER_SIZE);
-		if (read_flag_or_index == -1)
+		read_flag_size = read(fd, real_buf, BUFFER_SIZE);
+		if (read_flag_size < 0)
 		{
-			free (collector_buff);
+			if (few_buffers)
+				free(few_buffers);
 			return (NULL);
 		}
-		tmp_buf[read_flag_or_index] = '\0';
-		collector_buff = ft_strjoin(collector_buff, tmp_buf);
-		free (tmp_buf);
+		real_buf[read_flag_size] = '\0';
+		if (!few_buffers)
+			tmp_line = ft_strdup(real_buf);
+		else
+			tmp_line = ft_strjoin(few_buffers, real_buf);
+		few_buffers = tmp_line;
+		if (ft_strchr(few_buffers, '\n') || read_flag_size == 0)
+			break ;
 	}
-	return (collector_buff);
-}
-
-char	*ft_make_output_remove_extra(char *collector_buff)
-{
-	char	*output_line;
-	int		index_newline_symbol;
-	int		use_part;
-
-	index_newline_symbol = ft_strchr(collector_buff, '\n');
-	use_part = ft_strlen(collector_buff) - ft_strlen(index_newline_symbol) + 1;
-	if (index_newline_symbol)
-		output_line = ft_substr(collector_buff, 0, use_part);
-	else
-		output_line = ft_strdup(collector_buff);
-	return (output_line);
-}
-
-char	*ft_dzi_buffer(char *collector_buf)
-{
-	char	*tmp_pointer;
-	int		length;
-
-	if (ft_strchr(collector_buf, '\n'))
-	{
-		tmp_pointer = collector_buf;
-		length = ft_strlen(ft_strchr(collector_buf, '\n') + 1);
-		collector_buf = ft_substr(collector_buf, ft_strlen(collector_buf) - length, length);
-		free (tmp_pointer);
-		tmp_pointer = NULL;
-	}
-	else
-	{
-		free(collector_buf);
-		return (NULL);
-	}
-	return (collector_buf);
+	return (few_buffers);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*output_string;
-	char static	*collector_buff = NULL;
+	static char		*few_buf;
+	char			*to_free;
+	char			*res_str;
+	size_t			len_out;
 
-	if (BUFFER_SIZE <= 0 || fd < 0 || read(fd, 0, 0) < 0)
-		return (NULL);
-	collector_buff = read_line(fd, collector_buff);
-	if (collector_buff[0] == '\0')
+	if ((fd < 0 || fd > OPEN_MAX) || BUFFER_SIZE == 0)
 	{
-		free(collector_buff);
-		collector_buff = NULL;
+		if (few_buf)
+			free(few_buf);
 		return (NULL);
 	}
-	output_string = ft_make_output_remove_extra(collector_buff);
-	collector_buff = ft_dzi_buffer(collector_buff);
-	return (output_string);
+	few_buf = ft_get_slice(fd, few_buf);
+	if (!few_buf)
+		return (NULL);
+	len_out = ft_strchr(few_buf, '\n') - few_buf;
+	res_str = ft_substr(few_buf, 0, len_out + 1);
+	to_free = few_buf;
+	few_buf = ft_substr(few_buf, len_out + 1, (ft_strlen(few_buf) - len_out));
+	free(to_free);
+	return (res_str);
 }
