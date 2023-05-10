@@ -12,7 +12,7 @@
 
 #include "get_next_line_bonus.h"
 
-static char	*ft_get_slice(int fd, char *few_buffers)
+char	*ft_get_slice(int fd, char *few_buffers)
 {
 	char	real_buf[BUFFER_SIZE + 1];
 	char	*tmp_line;
